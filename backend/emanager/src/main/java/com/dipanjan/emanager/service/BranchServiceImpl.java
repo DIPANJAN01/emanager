@@ -44,6 +44,12 @@ public class BranchServiceImpl implements BranchService {
     }
 
     @Override
+    public Branch createBranch(Branch newBranch) {
+        return branchRepository.save(newBranch);
+
+    }
+
+    @Override
     public Branch editBranch(Long id, Branch updatedBranch) {
 
         getBranch(id); // if branch doesn't exist an error will be thrown, otherwise its a valid id
