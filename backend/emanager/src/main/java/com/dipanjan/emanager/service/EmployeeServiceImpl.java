@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.dipanjan.emanager.entities.Branch;
 import com.dipanjan.emanager.entities.Employee;
-import com.dipanjan.emanager.repository.BranchRepository;
 import com.dipanjan.emanager.repository.EmployeeRepository;
 import com.dipanjan.emanager.utils.UnwrapOptional;
 
