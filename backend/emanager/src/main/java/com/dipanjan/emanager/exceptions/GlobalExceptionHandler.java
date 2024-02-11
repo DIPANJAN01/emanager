@@ -12,6 +12,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -61,7 +62,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, HttpHeaders headers,
             HttpStatusCode status, WebRequest request) {
-        return new ResponseEntity<>(new ErrorResponse("The requested URL does not exist."),
+        String requestedUrl = ((ServletWebRequest) request).getRequest().getRequestURI();
+        return new ResponseEntity<>(new ErrorResponse("The requested URL '" + requestedUrl + "' does not exist."),
                 HttpStatus.NOT_FOUND);
     }
 }

@@ -1,0 +1,77 @@
+# version: "3.3"
+# services:
+#   db:
+#     image: mysql/mysql-server:8.0
+#     restart: always
+#     environment:
+#       MYSQL_DATABASE: "db_1"
+#       MYSQL_USER: "user"
+#       MYSQL_PASSWORD: "1234"
+#       MYSQL_ROOT_PASSWORD: "root_1234"
+#     ports:
+#       - "3307:3306"
+#     expose:
+#       - "3306"
+#     volumes:
+#       - my-db:/var/lib/mysql
+# volumes:
+#   my-db:
+
+#emanager:
+version: "3.3"
+services:
+  db:
+    image: mysql/mysql-server:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: "emanager"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "1234"
+      MYSQL_ROOT_PASSWORD: "root_1234"
+    ports:
+      - "3311:3306"
+    expose:
+      - "3306"
+    volumes:
+      - my-db-emanager:/var/lib/mysql
+volumes:
+  my-db-emanager:
+
+
+
+#the newer one:
+# version: "3.3"
+# services:
+#   db_1:
+#     image: mysql/mysql-server:8.0
+#     restart: always
+#     environment:
+#       MYSQL_DATABASE: "db_1"
+#       MYSQL_USER: "user"
+#       MYSQL_PASSWORD: "1234"
+#       MYSQL_ROOT_PASSWORD: "root_1234"
+#     ports:
+#       - "3307:3306"
+#     expose:
+#       - "3306"
+#     volumes:
+#       - my-db-1:/var/lib/mysql
+
+#   db_2:
+#     image: mysql/mysql-server:8.0
+#     restart: always
+#     environment:
+#       MYSQL_DATABASE: "db_2"
+#       MYSQL_USER: "user"
+#       MYSQL_PASSWORD: "1234"
+#       MYSQL_ROOT_PASSWORD: "root_1234"
+#     ports:
+#       - "3308:3306"
+#     expose:
+#       - "3306"
+#     volumes:
+#       - my-db-2:/var/lib/mysql
+
+# volumes:
+#   my-db-1:
+#   my-db-2:
