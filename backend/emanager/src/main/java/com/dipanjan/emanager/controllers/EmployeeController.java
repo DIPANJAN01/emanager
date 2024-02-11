@@ -1,0 +1,56 @@
+package com.dipanjan.emanager.controllers;
+
+import org.springframework.web.bind.annotation.RestController;
+
+import com.dipanjan.emanager.entities.Employee;
+import com.dipanjan.emanager.service.EmployeeService;
+
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+@RestController
+@AllArgsConstructor
+@RequestMapping("/employees")
+
+public class EmployeeController {
+    EmployeeService employeeService;
+
+    @GetMapping("/")
+    public ResponseEntity<List<Employee>> getAllEmployees() {
+        return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
+        return new ResponseEntity<>(employeeService.getEmployee(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<Employee> postEmployee(@RequestBody @Valid Employee employee) {
+        return new ResponseEntity<>(employeeService.createEmployee(employee), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> putEmployee(@PathVariable Long id, @RequestBody @Valid Employee employee) {
+        return new ResponseEntity<>(employeeService.editEmployee(id, employee), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteEmployee(@PathVariable Long id) {
+        employeeService.deleteEmployee(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+}
