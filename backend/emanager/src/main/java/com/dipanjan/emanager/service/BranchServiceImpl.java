@@ -45,6 +45,8 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     public Branch createBranch(Branch newBranch) {
+
+        checkBranchExists(newBranch.getName());// will throw an error if the branch name exists
         return branchRepository.save(newBranch);
 
     }
