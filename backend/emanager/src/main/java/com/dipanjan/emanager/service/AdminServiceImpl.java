@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.dipanjan.emanager.entities.Admin;
+import com.dipanjan.emanager.exceptions.EntityAlreadyExistsException;
 import com.dipanjan.emanager.repository.AdminRepository;
 import com.dipanjan.emanager.utils.UnwrapOptional;
 
@@ -14,38 +15,48 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
-    AdminRepository empRepository;
+    AdminRepository adminRepository;
 
     @Override
     public Admin getAdmin(Long id) {
-        Optional<Admin> adminAdmin = empRepository.findById(id);
+        Optional<Admin> adminAdmin = adminRepository.findById(id);
         return UnwrapOptional.unwrap(adminAdmin, id, Admin.class);
     }
 
     @Override
     public List<Admin> getAllAdmins() {
-        return (List<Admin>) empRepository.findAll();
+        return (List<Admin>) adminRepository.findAll();
     }
 
     @Override
     public Admin createAdmin(Admin newAdmin) {
-        return empRepository.save(newAdmin);
+        if (adminRepository.existsByEmailIgnoreCase(newAdmin.getEmail()))
+            throw new EntityAlreadyExistsException(
+                    "Admin with email '" + newAdmin.getEmail() + "' already exists!");
+
+        return adminRepository.save(newAdmin);
 
     }
 
     @Override
     public Admin editAdmin(Long id, Admin updatedAdmin) {
 
-        getAdmin(id); // if adminAdmin doesn't exist an error will be thrown, otherwise its a valid id
+        getAdmin(id); // if admin doesn't exist an error will be thrown, otherwise its a valid id
+        Optional<Admin> admin = adminRepository.findByEmailIgnoreCase(updatedAdmin.getEmail());
+        if (admin.isPresent()) {
+            if (admin.get().getId() != id)
+                throw new EntityAlreadyExistsException(
+                        "Another admin with email '" + updatedAdmin.getEmail() + "' already exists!");
+        }
         updatedAdmin.setId(id);
-        empRepository.save(updatedAdmin);
+        adminRepository.save(updatedAdmin);
         return updatedAdmin;
     }
 
     @Override
     public void deleteAdmin(Long id) {
         getAdmin(id);// if adminAdmin doesn't exist an error will be thrown, otherwise its a valid id
-        empRepository.deleteById(id);
+        adminRepository.deleteById(id);
     }
 
 }

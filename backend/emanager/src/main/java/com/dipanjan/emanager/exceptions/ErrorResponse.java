@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class ErrorResponse {
 
-    private List<String> messages;
+    private List<String> errorMessages;
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Timestamp timestamp;
@@ -23,12 +23,12 @@ public class ErrorResponse {
     }
 
     public ErrorResponse(String message) {
-        this.messages = Arrays.asList(message);
+        this.errorMessages = Arrays.asList(message);
         this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 
     public ErrorResponse(List<String> message) {
-        this.messages = message;
+        this.errorMessages = message;
         this.timestamp = new Timestamp(System.currentTimeMillis());
     }
 

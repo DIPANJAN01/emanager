@@ -32,7 +32,7 @@ public class Admin {
 
     @NotNull(message = "You must enter an email for the admin")
     @Email(message = "Please enter a valid email")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @NotNull(message = "Please select a gender of the admin")

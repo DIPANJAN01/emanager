@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.dipanjan.emanager.entities.Branch;
-import com.dipanjan.emanager.exceptions.BranchAlreadyExistsException;
+import com.dipanjan.emanager.exceptions.EntityAlreadyExistsException;
 import com.dipanjan.emanager.repository.BranchRepository;
 import com.dipanjan.emanager.utils.UnwrapOptional;
 
@@ -30,7 +30,7 @@ public class BranchServiceImpl implements BranchService {
 
     public boolean checkBranchExists(String branchName) {
         if (branchRepository.existsByNameIgnoreCase(branchName))
-            throw new BranchAlreadyExistsException("A branch of name '" + branchName + "' already exists!");
+            throw new EntityAlreadyExistsException("A branch of name '" + branchName + "' already exists!");
 
         return false;
     }
@@ -47,7 +47,12 @@ public class BranchServiceImpl implements BranchService {
     public Branch editBranch(Long id, Branch updatedBranch) {
 
         getBranch(id); // if branch doesn't exist an error will be thrown, otherwise its a valid id
-
+        Optional<Branch> branch = branchRepository.findByNameIgnoreCase(updatedBranch.getName());
+        if (branch.isPresent()) {
+            if (branch.get().getId() != id)
+                throw new EntityAlreadyExistsException(
+                        "Another branch with name '" + updatedBranch.getName() + "' already exits!");
+        }
         updatedBranch.setId(id);
         branchRepository.save(updatedBranch);
         return updatedBranch;

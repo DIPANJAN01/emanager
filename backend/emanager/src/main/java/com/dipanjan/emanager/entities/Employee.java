@@ -34,7 +34,7 @@ public class Employee {
 
     @NotNull(message = "You must enter an email for the employee")
     @Email(message = "Please enter a valid email")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @NotNull(message = "Please select a gender of the employee")

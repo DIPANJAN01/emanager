@@ -27,10 +27,11 @@ public class Branch {
     private Long id;
 
     @NotBlank(message = "Please enter a city for the branch")
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @NotBlank(message = "Please enter a city for the branch")
+    @Column(nullable = false)
     private String city;
 
     @JsonIgnore
