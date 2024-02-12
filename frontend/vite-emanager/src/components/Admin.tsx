@@ -30,10 +30,10 @@ const Admin = () => {
         <thead>
           <tr>
             <th>Id</th>
-            <th>Admin Name</th>
+            <th className="minWidthTh">Admin Name</th>
             <th>Admin Email</th>
-            <th>Gender</th>
-            <th>Date of birth</th>
+            <th className="d-none d-md-table-cell">Gender</th>
+            <th className="d-none d-md-table-cell">Date of birth</th>
           </tr>
         </thead>
         <tbody>
@@ -42,8 +42,8 @@ const Admin = () => {
               <td>{admin.id}</td>
               <td>{admin.name}</td>
               <td>{admin.email}</td>
-              <td>{admin.gender}</td>
-              <td>{admin.dob}</td>
+              <td className="d-none d-md-table-cell">{admin.gender}</td>
+              <td className="d-none d-md-table-cell">{admin.dob}</td>
             </tr>
           ))}
         </tbody>

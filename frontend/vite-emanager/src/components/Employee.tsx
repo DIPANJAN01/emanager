@@ -12,7 +12,7 @@ interface EmployeeType {
   branch: BranchType;
 }
 
-const Employe = () => {
+const Employee = () => {
   const [employees, setEmployees] = useState<EmployeeType[]>([]);
   useEffect(() => {
     axios
@@ -33,9 +33,9 @@ const Employe = () => {
           <tr>
             <th>Id</th>
             <th>Employee Name</th>
-            <th>Employee Email</th>
-            <th>Gender</th>
-            <th>Date of birth</th>
+            <th className="d-none d-md-table-cell">Employee Email</th>
+            <th className="d-none d-md-table-cell">Gender</th>
+            <th className="d-none d-md-table-cell">Date of birth</th>
             <th>Branch</th>
           </tr>
         </thead>
@@ -44,10 +44,18 @@ const Employe = () => {
             <tr key={index}>
               <td>{employee.id}</td>
               <td>{employee.name}</td>
-              <td>{employee.email}</td>
-              <td>{employee.gender}</td>
-              <td>{employee.dob}</td>
-              <td>{employee.branch.name}</td>
+              <td className="d-none d-md-table-cell">{employee.email}</td>
+              <td className="d-none d-md-table-cell">{employee.gender}</td>
+              <td className="d-none d-md-table-cell">{employee.dob}</td>
+              <td>
+                {/* {employee.branch.name} */}
+                {/* Conditionally render branch.city for medium and larger screens */}
+                <span className="d-none d-md-inline">
+                  {employee.branch.name}
+                </span>
+                {/* Conditionally render branch.name for smaller screens */}
+                <span className="d-md-none">{employee.branch.city}</span>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -56,4 +64,4 @@ const Employe = () => {
   );
 };
 
-export default Employe;
+export default Employee;

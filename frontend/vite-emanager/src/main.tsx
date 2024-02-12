@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Branch from "./components/Branch.tsx";
 import Employee from "./components/Employee.tsx";
+import Admin from "./components/Admin.tsx";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/employees", element: <Employee /> },
       { path: "/branches", element: <Branch /> },
+      { path: "/admins", element: <Admin /> },
     ],
   },
 ]);
