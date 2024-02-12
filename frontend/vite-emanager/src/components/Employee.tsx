@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Table } from "react-bootstrap";
+import { BranchType } from "./Branch";
 
 interface EmployeeType {
   id: string;
@@ -8,6 +9,7 @@ interface EmployeeType {
   email: string;
   gender: string;
   dob: string;
+  branch: BranchType;
 }
 
 const Employe = () => {
@@ -34,6 +36,7 @@ const Employe = () => {
             <th>Employee Email</th>
             <th>Gender</th>
             <th>Date of birth</th>
+            <th>Branch</th>
           </tr>
         </thead>
         <tbody>
@@ -44,6 +47,7 @@ const Employe = () => {
               <td>{employee.email}</td>
               <td>{employee.gender}</td>
               <td>{employee.dob}</td>
+              <td>{employee.branch.name}</td>
             </tr>
           ))}
         </tbody>

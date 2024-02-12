@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Table } from "react-bootstrap";
 
-interface BranchType {
+export interface BranchType {
   id: number;
   name: string;
   city: string;
