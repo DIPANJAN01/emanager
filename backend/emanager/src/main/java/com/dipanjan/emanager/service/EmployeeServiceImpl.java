@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.dipanjan.emanager.entities.Branch;
 import com.dipanjan.emanager.entities.Employee;
+import com.dipanjan.emanager.exceptions.EntityAlreadyExistsException;
 import com.dipanjan.emanager.repository.EmployeeRepository;
 import com.dipanjan.emanager.utils.UnwrapOptional;
 
@@ -31,8 +32,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee createEmployee(Employee newEmployee) {
+        if (empRepository.existsByEmailIgnoreCase(newEmployee.getEmail()))
+            throw new EntityAlreadyExistsException(
+                    "Employee with email '" + newEmployee.getEmail() + "' already exists!");
+
         Branch branch = branchService.getBranch(newEmployee.getBranch().getId());
         newEmployee.setBranch(branch);
+
         return empRepository.save(newEmployee);
 
     }
@@ -41,6 +47,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee editEmployee(Long id, Employee updatedEmployee) {
 
         getEmployee(id); // if employee doesn't exist an error will be thrown, otherwise its a valid id
+        Optional<Employee> employee = empRepository.findByEmailIgnoreCase(updatedEmployee.getEmail());
+        if (employee.isPresent()) {
+            if (employee.get().getId() != id)
+                throw new EntityAlreadyExistsException(
+                        "Another employee with email '" + updatedEmployee.getEmail() + "' already exists!");
+        }
         Branch branch = branchService.getBranch(updatedEmployee.getBranch().getId());// if branch doesn't exist an error
                                                                                      // will be thrown
 

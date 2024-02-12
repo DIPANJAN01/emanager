@@ -25,8 +25,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(BranchAlreadyExistsException.class)
-    ResponseEntity<Object> handleBranchAlreadyExists(BranchAlreadyExistsException ex) {
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    ResponseEntity<Object> handleEntityAlreadyExists(EntityAlreadyExistsException ex) {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.CONFLICT);
     }
 
