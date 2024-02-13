@@ -51,7 +51,7 @@ const Employee = () => {
                 {/* {employee.branch.name} */}
                 {/* Conditionally render branch.city for medium and larger screens */}
                 <span className="d-none d-md-inline">
-                  {employee.branch.name}
+                  {employee.branch.name}, {employee.branch.city}
                 </span>
                 {/* Conditionally render branch.name for smaller screens */}
                 <span className="d-md-none">{employee.branch.city}</span>

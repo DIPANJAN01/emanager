@@ -4,9 +4,9 @@ import App from "./App.tsx";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Branch from "./components/Branch.tsx";
-import Employee from "./components/Employee.tsx";
-import Admin from "./components/Admin.tsx";
+import Branch from "./components/pages/Branch.tsx";
+import Employee from "./components/pages/Employee.tsx";
+import Admin from "./components/pages/Admin.tsx";
 
 const router = createBrowserRouter([
   {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Table } from "react-bootstrap";
+import MyModal from "../MyModal";
 
 export interface BranchType {
   id: number;
@@ -10,6 +11,11 @@ export interface BranchType {
 
 const Branch = () => {
   const [branches, setBranches] = useState<BranchType[]>([]);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   useEffect(() => {
     axios
       .get<BranchType[]>("http://localhost:8082/branches/")
@@ -34,7 +40,7 @@ const Branch = () => {
         </thead>
         <tbody>
           {branches.map((branch, index) => (
-            <tr key={index}>
+            <tr onClick={handleShow} key={index}>
               <td>{branch.id}</td>
               <td>{branch.name}</td>
               <td>{branch.city}</td>
@@ -42,6 +48,8 @@ const Branch = () => {
           ))}
         </tbody>
       </Table>
+
+      {show && <MyModal show={show} handleClose={handleClose} />}
     </div>
   );
 };

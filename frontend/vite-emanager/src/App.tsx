@@ -24,7 +24,7 @@ function App() {
               <NavLink
                 to={"/employees"}
                 className={({ isActive }) => {
-                  return isActive ? "myIsSelected" : "";
+                  return isActive ? "myIsSelected mb-1" : "mb-1";
                 }}
               >
                 Employees
@@ -33,20 +33,18 @@ function App() {
               <NavLink
                 to={"/admins"}
                 className={({ isActive }) => {
-                  return isActive ? "myIsSelected" : "";
+                  return isActive ? "myIsSelected mb-1" : "mb-1";
                 }}
               >
-                {" "}
                 Admins
               </NavLink>
 
               <NavLink
                 to={"/branches"}
                 className={({ isActive }) => {
-                  return isActive ? "myIsSelected" : "";
+                  return isActive ? "myIsSelected mb-1" : "mb-1";
                 }}
               >
-                {" "}
                 Branches
               </NavLink>
             </Nav>
