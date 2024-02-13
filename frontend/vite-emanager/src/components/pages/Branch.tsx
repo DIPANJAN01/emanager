@@ -11,16 +11,21 @@ export interface BranchType {
 
 const Branch = () => {
   const [branches, setBranches] = useState<BranchType[]>([]);
-  const [show, setShow] = useState(false);
+  const [selectedBranch, setSelectedBranch] = useState<BranchType | null>(null);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleRowClick = (branch: BranchType) => {
+    setSelectedBranch(branch);
+  };
+
+  const handleClose = () => {
+    setSelectedBranch(null);
+  };
 
   useEffect(() => {
     axios
       .get<BranchType[]>("http://localhost:8082/branches/")
       .then((response) => {
-        console.log("Branches:", response.data);
+        // console.log("Branches:", response.data);
         setBranches(response.data);
       })
       .catch((error) => {
@@ -40,7 +45,11 @@ const Branch = () => {
         </thead>
         <tbody>
           {branches.map((branch, index) => (
-            <tr onClick={handleShow} key={index}>
+            <tr
+              style={{ cursor: "pointer" }}
+              onClick={() => handleRowClick(branch)}
+              key={index}
+            >
               <td>{branch.id}</td>
               <td>{branch.name}</td>
               <td>{branch.city}</td>
@@ -49,7 +58,13 @@ const Branch = () => {
         </tbody>
       </Table>
 
-      {show && <MyModal show={show} handleClose={handleClose} />}
+      {selectedBranch && (
+        <MyModal
+          branch={selectedBranch}
+          show={selectedBranch ? true : false}
+          handleClose={handleClose}
+        />
+      )}
     </div>
   );
 };

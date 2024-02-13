@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Table } from "react-bootstrap";
 import { BranchType } from "./Branch";
+import MyModal from "../MyModal";
 
-interface EmployeeType {
+export interface EmployeeType {
   id: string;
   name: string;
   email: string;
@@ -14,6 +15,18 @@ interface EmployeeType {
 
 const Employee = () => {
   const [employees, setEmployees] = useState<EmployeeType[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeType | null>(
+    null
+  );
+
+  const handleRowClick = (employee: EmployeeType) => {
+    setSelectedEmployee(employee);
+  };
+
+  const handleClose = () => {
+    setSelectedEmployee(null);
+  };
+
   useEffect(() => {
     axios
       .get<EmployeeType[]>("http://localhost:8082/employees/")
@@ -41,7 +54,11 @@ const Employee = () => {
         </thead>
         <tbody>
           {employees.map((employee, index) => (
-            <tr key={index}>
+            <tr
+              style={{ cursor: "pointer" }}
+              onClick={() => handleRowClick(employee)}
+              key={index}
+            >
               <td>{employee.id}</td>
               <td>{employee.name}</td>
               <td className="d-none d-md-table-cell">{employee.email}</td>
@@ -60,6 +77,14 @@ const Employee = () => {
           ))}
         </tbody>
       </Table>
+
+      {selectedEmployee && (
+        <MyModal
+          employee={selectedEmployee}
+          show={selectedEmployee ? true : false}
+          handleClose={handleClose}
+        />
+      )}
     </div>
   );
 };

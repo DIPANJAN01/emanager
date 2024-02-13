@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Table } from "react-bootstrap";
+import MyModal from "../MyModal";
 
-interface AdminType {
+export interface AdminType {
   id: string;
   name: string;
   email: string;
@@ -12,6 +13,16 @@ interface AdminType {
 
 const Admin = () => {
   const [admins, setAdmins] = useState<AdminType[]>([]);
+  const [selectedAdmin, setSelectedAdmin] = useState<AdminType | null>(null);
+
+  const handleRowClick = (admin: AdminType) => {
+    setSelectedAdmin(admin);
+  };
+
+  const handleClose = () => {
+    setSelectedAdmin(null);
+  };
+
   useEffect(() => {
     axios
       .get<AdminType[]>("http://localhost:8082/admins/")
@@ -38,7 +49,11 @@ const Admin = () => {
         </thead>
         <tbody>
           {admins.map((admin, index) => (
-            <tr key={index}>
+            <tr
+              style={{ cursor: "pointer" }}
+              onClick={() => handleRowClick(admin)}
+              key={index}
+            >
               <td>{admin.id}</td>
               <td>{admin.name}</td>
               <td>{admin.email}</td>
@@ -48,6 +63,14 @@ const Admin = () => {
           ))}
         </tbody>
       </Table>
+
+      {selectedAdmin && (
+        <MyModal
+          admin={selectedAdmin}
+          show={selectedAdmin ? true : false}
+          handleClose={handleClose}
+        />
+      )}
     </div>
   );
 };

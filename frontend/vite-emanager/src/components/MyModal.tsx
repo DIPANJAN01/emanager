@@ -1,27 +1,41 @@
 import { Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
+import BranchForm from "./forms/BranchForm";
+import Employee, { EmployeeType } from "./pages/Employee";
+import Branch, { BranchType } from "./pages/Branch";
+import { AdminType } from "./pages/Admin";
+import EmployeeForm from "./forms/EmployeeForm";
+import AdminForm from "./forms/AdminForm";
 
 interface ModalProps {
   show: boolean;
   handleClose: () => void;
+  branch?: BranchType;
+  employee?: EmployeeType;
+  admin?: AdminType;
 }
 
-const MyModal = ({ show, handleClose }: ModalProps) => {
+const MyModal = ({
+  show,
+  handleClose,
+  branch,
+  employee,
+  admin,
+}: ModalProps) => {
+  console.log("In mymodal", branch?.name);
   return (
     <>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Add Branch</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
+        <Modal.Body>
+          {branch && <BranchForm branch={branch} handleClose={handleClose} />}
+          {employee && (
+            <EmployeeForm employee={employee} handleClose={handleClose} />
+          )}
+          {admin && <AdminForm admin={admin} handleClose={handleClose} />}
+        </Modal.Body>
       </Modal>
     </>
   );
