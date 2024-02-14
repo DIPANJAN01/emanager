@@ -1,40 +1,77 @@
 import { Button, Form } from "react-bootstrap";
 import { AdminType } from "../pages/Admin";
 import { useState } from "react";
-import Gender from "./Gender";
-import Calendar from "react-calendar";
+import Genders from "./Genders";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {
+  createDateFromFormat,
+  formatDateToString,
+} from "../../utils/Dateformatter";
+
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const adminFormSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+  gender: z.string(),
+  dob: z.string(),
+});
 
 interface FormProps {
   admin: AdminType;
   handleClose: () => void;
 }
-type ValuePiece = Date | null;
-
-type Value = ValuePiece | [ValuePiece, ValuePiece];
+// type ValuePiece = Date | null;
+// type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
   const [admin, setAdmin] = useState<AdminType>(propAdmin);
+  const [startDate, setStartDate] = useState<Date>(
+    createDateFromFormat(admin.dob)
+  );
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: zodResolver(adminFormSchema),
+  });
 
   const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setAdmin({ ...admin, gender: event.target.value });
   };
 
-  const [value, onChange] = useState<Value>(new Date());
+  const [value, onChange] = useState<Date>(new Date());
+
+  const submitHandler = () => {
+    console.log("submitting");
+  };
 
   return (
-    <Form>
+    <Form onSubmit={handleSubmit(submitHandler)}>
       <Form.Group className="mb-3" controlId="formBasicText">
         <Form.Label>Admin Name</Form.Label>
         <Form.Control
+          {...register("name")}
           type="text"
           placeholder="Enter admin name"
-          value={admin?.name}
         />
+        {errors.name && (
+          <Form.Control.Feedback type="invalid">
+            Please enter a name.
+          </Form.Control.Feedback>
+        )}
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formBasicText">
         <Form.Label>Admin Email</Form.Label>
         <Form.Control
+          {...register("email")}
           type="email"
           placeholder="Enter admin email"
           value={admin?.email}
@@ -42,11 +79,24 @@ const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formBasicText">
-        <Gender entity={admin} handleGenderChange={handleGenderChange} />
+        <Genders entity={admin} handleGenderChange={handleGenderChange} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="formBasicText">
-        <Calendar onChange={onChange} value={value} />
+        <div>Date of Birth</div>
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => {
+            setStartDate(date);
+            setAdmin({ ...admin, dob: formatDateToString(date) });
+          }}
+          dateFormat={"dd/MM/yyyy"}
+          showYearDropdown
+          scrollableYearDropdown
+          isClearable
+          yearDropdownItemNumber={75}
+          yearItemNumber={40}
+        />
       </Form.Group>
 
       <Button variant="primary" type="submit">

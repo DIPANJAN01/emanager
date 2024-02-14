@@ -6,7 +6,7 @@ interface GenderProp {
   handleGenderChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   entity: AdminType | EmployeeType;
 }
-const Gender = ({ handleGenderChange, entity }: GenderProp) => {
+const Genders = ({ handleGenderChange, entity }: GenderProp) => {
   return (
     <>
       <Form.Label>Gender</Form.Label>
@@ -26,4 +26,4 @@ const Gender = ({ handleGenderChange, entity }: GenderProp) => {
   );
 };
 
-export default Gender;
+export default Genders;

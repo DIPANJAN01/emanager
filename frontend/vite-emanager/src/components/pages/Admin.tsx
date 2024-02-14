@@ -27,7 +27,14 @@ const Admin = () => {
     axios
       .get<AdminType[]>("http://localhost:8082/admins/")
       .then((response) => {
-        console.log("Admins:", response.data);
+        // const adminsWithDate = response.data.map((admin) => {
+        //   return {
+        //     ...admin,
+        //     dob: new Date(admin.dob.split("-").reverse().join("-")),
+        //   };
+        // });
+        // console.log("Admin's dob:", adminsWithDate[0].dob);
+        // console.log("Admin's dob:", adminsWithDate[0].dob);
         setAdmins(response.data);
       })
       .catch((error) => {

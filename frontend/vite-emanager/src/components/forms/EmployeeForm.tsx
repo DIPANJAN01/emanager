@@ -1,7 +1,9 @@
 import { Button, Form } from "react-bootstrap";
 import { EmployeeType } from "../pages/Employee";
 import { useState } from "react";
-import Gender from "./Gender";
+import Genders from "./Genders";
+import Branches from "./Branches";
+import { BranchType } from "../pages/Branch";
 
 interface FormProps {
   employee: EmployeeType;
@@ -15,10 +17,13 @@ const EmployeeForm = ({ employee: propEmployee, handleClose }: FormProps) => {
     console.log(event.target.value);
     setEmployee({ ...employee, gender: event.target.value });
   };
+  const handleBranchChange = (branch: BranchType) => {
+    branch && setEmployee({ ...employee, branch });
+  };
 
   return (
     <Form>
-      <Form.Group className="mb-3" controlId="formBasicText">
+      <Form.Group className="mb-3" controlId="formBasicEmployeeName">
         <Form.Label>Employee Name</Form.Label>
         <Form.Control
           type="text"
@@ -27,7 +32,7 @@ const EmployeeForm = ({ employee: propEmployee, handleClose }: FormProps) => {
         />
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicText">
+      <Form.Group className="mb-3" controlId="formBasicEmployeeEmail">
         <Form.Label>Employee Email</Form.Label>
         <Form.Control
           type="email"
@@ -36,8 +41,12 @@ const EmployeeForm = ({ employee: propEmployee, handleClose }: FormProps) => {
         />
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formBasicText">
-        <Gender entity={employee} handleGenderChange={handleGenderChange} />
+      <Form.Group className="mb-3" controlId="formBasicEmpGender">
+        <Genders entity={employee} handleGenderChange={handleGenderChange} />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="formBasicEmpBranch">
+        <Branches entity={employee} handleBranchChange={handleBranchChange} />
       </Form.Group>
 
       <Button variant="primary" type="submit">
