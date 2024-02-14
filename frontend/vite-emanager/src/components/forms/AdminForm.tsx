@@ -7,25 +7,46 @@ import "react-datepicker/dist/react-datepicker.css";
 import {
   createDateFromFormat,
   formatDateToString,
+  isAdult,
+  isValidDate,
 } from "../../utils/Dateformatter";
 
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const adminFormSchema = z.object({
-  name: z.string(),
-  email: z.string().email(),
-  gender: z.string(),
-  dob: z.string(),
-});
+const adminFormSchema = z
+  .object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email(),
+    gender: z.string(),
+    dob: z.date(),
+  })
+  .refine(
+    (data) => {
+      console.log("in here", data.dob);
+      return ["MALE", "FEMALE", "OTHER"].includes(data.gender);
+    },
+    {
+      message: "Please select a valid gender",
+      path: ["gender"],
+    }
+  )
+  .refine(
+    (data) => {
+      console.log("in here", data.dob);
+      return isValidDate(data.dob) && isAdult(data.dob);
+    },
+    {
+      message: "Please select a valid gender",
+      path: ["gender"],
+    }
+  );
 
 interface FormProps {
   admin: AdminType;
   handleClose: () => void;
 }
-// type ValuePiece = Date | null;
-// type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
   const [admin, setAdmin] = useState<AdminType>(propAdmin);
@@ -38,6 +59,7 @@ const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm({
     resolver: zodResolver(adminFormSchema),
   });
@@ -45,65 +67,118 @@ const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
   const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setAdmin({ ...admin, gender: event.target.value });
   };
-
-  const [value, onChange] = useState<Date>(new Date());
-
+  const handleDateChange = (event) => {
+    // Convert the string value to a Date object
+    const date = new Date(event.target.value);
+    console.log(event.target.value);
+    // Format the date to "yyyy-MM-dd" format
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+    // Set the value in the form state
+    setValue("dob", new Date(formattedDate));
+  };
   const submitHandler = () => {
+    // if (!isValidDate) {
+    //   setDateErr("Please select a valid date");
+    //   return;
+    // } else if (!isAdult) {
+    //   setDateErr("Admin must be 18+!");
+    //   return;
+    // }
     console.log("submitting");
   };
 
   return (
-    <Form onSubmit={handleSubmit(submitHandler)}>
-      <Form.Group className="mb-3" controlId="formBasicText">
-        <Form.Label>Admin Name</Form.Label>
-        <Form.Control
+    <form onSubmit={handleSubmit(submitHandler)}>
+      <div className="mb-3">
+        <label htmlFor="exampleInputName" className="form-label">
+          Admin name
+        </label>
+        <input
           {...register("name")}
           type="text"
-          placeholder="Enter admin name"
+          className="form-control"
+          id="exampleInputName"
+          aria-describedby="nameHelp"
         />
         {errors.name && (
-          <Form.Control.Feedback type="invalid">
-            Please enter a name.
-          </Form.Control.Feedback>
+          <div id="nameHelp" className="form-text text-danger">
+            {errors.name.message}
+          </div>
         )}
-      </Form.Group>
+      </div>
 
-      <Form.Group className="mb-3" controlId="formBasicText">
-        <Form.Label>Admin Email</Form.Label>
-        <Form.Control
+      <div className="mb-3">
+        <label htmlFor="exampleInputEmail1" className="form-label">
+          Email address
+        </label>
+        <input
           {...register("email")}
           type="email"
-          placeholder="Enter admin email"
-          value={admin?.email}
+          className="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
         />
-      </Form.Group>
+        {errors.email && (
+          <div id="emailHelp" className="form-text text-danger">
+            {errors.email.message}
+          </div>
+        )}
+      </div>
 
-      <Form.Group className="mb-3" controlId="formBasicText">
-        <Genders entity={admin} handleGenderChange={handleGenderChange} />
-      </Form.Group>
+      {/* DATE: */}
 
-      <Form.Group className="mb-3" controlId="formBasicText">
-        <div>Date of Birth</div>
-        <DatePicker
-          selected={startDate}
-          onChange={(date) => {
-            setStartDate(date);
-            setAdmin({ ...admin, dob: formatDateToString(date) });
-          }}
-          dateFormat={"dd/MM/yyyy"}
-          showYearDropdown
-          scrollableYearDropdown
-          isClearable
-          yearDropdownItemNumber={75}
-          yearItemNumber={40}
+      <div className="mb-3">
+        <label htmlFor="InputDateOfBirth" className="form-label">
+          <span className="me-4">Date of birth</span>
+        </label>
+        <input
+          {...register("dob")}
+          type="date"
+          onChange={handleDateChange}
+          className="form-control"
+          id="InputDateOfBirth"
         />
-      </Form.Group>
+        {errors.dob && (
+          <div id="dobHelp" className="form-text text-danger">
+            {errors.dob.message}
+          </div>
+        )}
+      </div>
 
-      <Button variant="primary" type="submit">
-        Edit Admin
-      </Button>
-    </Form>
+      <div className="mb-3">
+        <label htmlFor="InputGender" className="form-label">
+          Gender
+        </label>
+        <select
+          {...register("gender")}
+          id="InputGender"
+          className="form-select"
+          aria-label="Gender select"
+        >
+          <option>Select a gender</option>
+          <option value="MALE" selected={admin.gender == "MALE"}>
+            Male
+          </option>
+          <option value="FEMALE" selected={admin.gender == "FEMALE"}>
+            Female
+          </option>
+          <option value="OTHER" selected={admin.gender == "OTHER"}>
+            Other
+          </option>
+        </select>
+        {errors.gender && (
+          <div id="genderHelp" className="form-text text-danger">
+            {errors.gender.message}
+          </div>
+        )}
+      </div>
+
+      <button type="submit" className="btn btn-primary">
+        Submit
+      </button>
+    </form>
   );
 };
-
 export default AdminForm;

@@ -17,3 +17,11 @@ export function formatDateToString(date: Date) {
 
   return `${day}/${month}/${year}`;
 }
+export const isValidDate = (date) => !isNaN(date.getTime());
+
+export const isAdult = (date) => {
+  const today = new Date();
+  const age = today.getFullYear() - date.getFullYear();
+  date.setFullYear(today.getFullYear());
+  return age >= 18 && date <= today;
+};
