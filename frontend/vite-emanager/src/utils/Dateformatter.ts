@@ -1,13 +1,24 @@
-export function createDateFromFormat(dateString: string) {
+export function createDMY(dateString: string) {
+  // console.log("dateString", dateString);
   const parts = dateString.split("-");
+  // console.log("parts", parts);
   // parts[0] -> day, parts[1] -> month, parts[2] -> year
 
   // Note: Months are zero-based in JavaScript's Date object, so we need to subtract 1 from the month
-  const year = parseInt(parts[2]);
-  const month = parseInt(parts[1]) - 1;
-  const day = parseInt(parts[0]);
+  const year = parseInt(parts[0]);
+  const month = parseInt(parts[1]);
+  const day = parseInt(parts[2]);
+  return new Date(`${year}-${month}-${day}`);
+}
 
-  return new Date(year, month, day);
+export function createYMDString(dateString: string) {
+  const parts = dateString.split("-");
+
+  const day = parts[0];
+  const month = parts[1];
+  const year = parts[2];
+
+  return `${year}-${month}-${day}`;
 }
 
 export function formatDateToString(date: Date) {
@@ -17,11 +28,11 @@ export function formatDateToString(date: Date) {
 
   return `${day}/${month}/${year}`;
 }
-export const isValidDate = (date) => !isNaN(date.getTime());
+export const isValidDate = (date: Date) => !isNaN(date.getTime());
 
-export const isAdult = (date) => {
+export const isAdult = (date: Date) => {
   const today = new Date();
+  // console.log(date.getFullYear());
   const age = today.getFullYear() - date.getFullYear();
-  date.setFullYear(today.getFullYear());
-  return age >= 18 && date <= today;
+  return age >= 18;
 };

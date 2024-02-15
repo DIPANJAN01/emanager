@@ -1,58 +1,19 @@
-import { Button, Form } from "react-bootstrap";
 import { AdminType } from "../pages/Admin";
 import { useState } from "react";
-import Genders from "./Genders";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  createDateFromFormat,
-  formatDateToString,
-  isAdult,
-  isValidDate,
-} from "../../utils/Dateformatter";
+import { createYMDString } from "../../utils/Dateformatter";
 
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import {
+  adminFormSchema,
+  adminFormType,
+  AdminFormProps,
+} from "./AdminFormSchema";
 
-const adminFormSchema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email(),
-    gender: z.string(),
-    dob: z.date(),
-  })
-  .refine(
-    (data) => {
-      console.log("in here", data.dob);
-      return ["MALE", "FEMALE", "OTHER"].includes(data.gender);
-    },
-    {
-      message: "Please select a valid gender",
-      path: ["gender"],
-    }
-  )
-  .refine(
-    (data) => {
-      console.log("in here", data.dob);
-      return isValidDate(data.dob) && isAdult(data.dob);
-    },
-    {
-      message: "Please select a valid gender",
-      path: ["gender"],
-    }
-  );
-
-interface FormProps {
-  admin: AdminType;
-  handleClose: () => void;
-}
-
-const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
+const AdminForm = ({ admin: propAdmin, handleClose }: AdminFormProps) => {
   const [admin, setAdmin] = useState<AdminType>(propAdmin);
-  const [startDate, setStartDate] = useState<Date>(
-    createDateFromFormat(admin.dob)
-  );
 
   const {
     register,
@@ -60,37 +21,41 @@ const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
     formState: { errors, isSubmitting },
     reset,
     setValue,
-  } = useForm({
+    setError,
+  } = useForm<adminFormType>({
     resolver: zodResolver(adminFormSchema),
+    defaultValues: {
+      name: admin.name,
+      email: admin.email,
+      dob: createYMDString(admin.dob),
+      gender: admin.gender,
+    },
   });
 
-  const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setAdmin({ ...admin, gender: event.target.value });
-  };
-  const handleDateChange = (event) => {
-    // Convert the string value to a Date object
-    const date = new Date(event.target.value);
-    console.log(event.target.value);
-    // Format the date to "yyyy-MM-dd" format
-    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
-    // Set the value in the form state
-    setValue("dob", new Date(formattedDate));
-  };
-  const submitHandler = () => {
-    // if (!isValidDate) {
-    //   setDateErr("Please select a valid date");
-    //   return;
-    // } else if (!isAdult) {
-    //   setDateErr("Admin must be 18+!");
-    //   return;
-    // }
-    console.log("submitting");
+  const submitHandler = async (formData) => {
+    try {
+      const response = await axios.get<boolean>(
+        `http://localhost:8082/admins/exists?&id=${admin.id}&email=${formData.email}`
+      );
+      const emailExists = response.data;
+
+      if (emailExists) {
+        setError("email", {
+          type: "manual",
+          message: "This email is already taken!",
+        });
+        return;
+      }
+      console.log("submitting");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(submitHandler)}>
+    <form noValidate onSubmit={handleSubmit(submitHandler)}>
+      {/* NAME */}
+
       <div className="mb-3">
         <label htmlFor="exampleInputName" className="form-label">
           Admin name
@@ -108,6 +73,8 @@ const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
           </div>
         )}
       </div>
+
+      {/* EMAIL: */}
 
       <div className="mb-3">
         <label htmlFor="exampleInputEmail1" className="form-label">
@@ -136,7 +103,6 @@ const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
         <input
           {...register("dob")}
           type="date"
-          onChange={handleDateChange}
           className="form-control"
           id="InputDateOfBirth"
         />
@@ -146,6 +112,8 @@ const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
           </div>
         )}
       </div>
+
+      {/* GENDER: */}
 
       <div className="mb-3">
         <label htmlFor="InputGender" className="form-label">
@@ -175,10 +143,13 @@ const AdminForm = ({ admin: propAdmin, handleClose }: FormProps) => {
         )}
       </div>
 
+      {/* SUBMIT BUTTON */}
+
       <button type="submit" className="btn btn-primary">
         Submit
       </button>
     </form>
   );
 };
+
 export default AdminForm;

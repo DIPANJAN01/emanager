@@ -29,6 +29,20 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public boolean emailExists(Long id, String email) {
+        if (id == null)
+            return adminRepository.existsByEmailIgnoreCase(email);
+
+        Optional<Admin> admin = adminRepository.findByEmailIgnoreCase(email);
+        if (admin.isPresent()) {
+            if (admin.get().getId() != id)
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public Admin createAdmin(Admin newAdmin) {
         if (adminRepository.existsByEmailIgnoreCase(newAdmin.getEmail()))
             throw new EntityAlreadyExistsException(
