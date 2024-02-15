@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { createDMY, isAdult } from "../../utils/Dateformatter";
+import { ymdStrToDmyDate, isAdult } from "../../utils/Dateformatter";
 import { AdminType } from "../pages/Admin";
 export interface AdminFormProps {
   admin: AdminType;
-  handleClose: () => void;
+  handleClose: (admin: AdminType) => void;
 }
 export const adminFormSchema = z
   .object({
@@ -24,7 +24,7 @@ export const adminFormSchema = z
   .refine(
     (data) => {
       //   console.log("past");
-      return new Date() > createDMY(data.dob);
+      return new Date() > ymdStrToDmyDate(data.dob);
     },
     {
       message: "Date must be in the past!",
@@ -34,7 +34,7 @@ export const adminFormSchema = z
   .refine(
     (data) => {
       //   console.log("above 18");
-      return isAdult(createDMY(data.dob));
+      return isAdult(ymdStrToDmyDate(data.dob));
     },
     {
       message: "Admin must be above 18!",

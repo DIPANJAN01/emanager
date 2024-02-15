@@ -1,4 +1,3 @@
-import { Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import BranchForm from "./forms/BranchForm";
 import Employee, { EmployeeType } from "./pages/Employee";
@@ -9,10 +8,11 @@ import AdminForm from "./forms/AdminForm";
 
 interface ModalProps {
   show: boolean;
-  handleClose: () => void;
+  handleClose: (admin?: AdminType) => void;
   branch?: BranchType;
   employee?: EmployeeType;
   admin?: AdminType;
+  setAdmin?: (admin: AdminType) => void;
 }
 
 const MyModal = ({

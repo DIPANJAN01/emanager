@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import MyModal from "../MyModal";
 
 export interface AdminType {
@@ -13,13 +13,33 @@ export interface AdminType {
 
 const Admin = () => {
   const [admins, setAdmins] = useState<AdminType[]>([]);
+  const [newAdmin, setNewAdmin] = useState<AdminType | null>(null); //will be used to open another modal for new admin
+
   const [selectedAdmin, setSelectedAdmin] = useState<AdminType | null>(null);
 
   const handleRowClick = (admin: AdminType) => {
     setSelectedAdmin(admin);
   };
 
-  const handleClose = () => {
+  const handleClose = (formAdmin?: AdminType) => {
+    if (!formAdmin) {
+      setSelectedAdmin(null);
+      return;
+    }
+
+    const indexToUpdate = admins.findIndex(
+      (admin) => admin.id === formAdmin.id
+    );
+    if (indexToUpdate !== -1) {
+      // Create a copy of the array of admins
+      const updatedAdmins = [...admins];
+
+      // Replace the admin at the found index with the new admin
+      updatedAdmins[indexToUpdate] = formAdmin;
+
+      // Update the state with the modified array
+      setAdmins(updatedAdmins);
+    }
     setSelectedAdmin(null);
   };
 
@@ -27,14 +47,6 @@ const Admin = () => {
     axios
       .get<AdminType[]>("http://localhost:8082/admins/")
       .then((response) => {
-        // const adminsWithDate = response.data.map((admin) => {
-        //   return {
-        //     ...admin,
-        //     dob: new Date(admin.dob.split("-").reverse().join("-")),
-        //   };
-        // });
-        // console.log("Admin's dob:", adminsWithDate[0].dob);
-        // console.log("Admin's dob:", adminsWithDate[0].dob);
         setAdmins(response.data);
       })
       .catch((error) => {
@@ -44,6 +56,7 @@ const Admin = () => {
 
   return (
     <div>
+      <Button className="d-block ms-auto mb-3">Add Admin</Button>
       <Table className="text-center" striped bordered hover>
         <thead>
           <tr>
@@ -73,7 +86,8 @@ const Admin = () => {
 
       {selectedAdmin && (
         <MyModal
-          admin={selectedAdmin}
+          admin={selectedAdmin ? selectedAdmin : undefined}
+          setAdmin={setSelectedAdmin}
           show={selectedAdmin ? true : false}
           handleClose={handleClose}
         />

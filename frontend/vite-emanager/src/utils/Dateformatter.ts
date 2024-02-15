@@ -1,4 +1,4 @@
-export function createDMY(dateString: string) {
+export function ymdStrToDmyDate(dateString: string) {
   // console.log("dateString", dateString);
   const parts = dateString.split("-");
   // console.log("parts", parts);
@@ -11,7 +11,7 @@ export function createDMY(dateString: string) {
   return new Date(`${year}-${month}-${day}`);
 }
 
-export function createYMDString(dateString: string) {
+export function dmyToYmdString(dateString: string) {
   const parts = dateString.split("-");
 
   const day = parts[0];
@@ -19,6 +19,15 @@ export function createYMDString(dateString: string) {
   const year = parts[2];
 
   return `${year}-${month}-${day}`;
+}
+export function ymdToDmyString(dateString: string) {
+  const parts = dateString.split("-");
+
+  const year = parts[0];
+  const month = parts[1];
+  const day = parts[2];
+  console.log(`${day}-${month}-${year}`);
+  return `${day}-${month}-${year}`;
 }
 
 export function formatDateToString(date: Date) {

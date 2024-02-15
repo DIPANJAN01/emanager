@@ -1,7 +1,5 @@
-import { AdminType } from "../pages/Admin";
-import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import { createYMDString } from "../../utils/Dateformatter";
+import { ymdToDmyString, dmyToYmdString } from "../../utils/Dateformatter";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,27 +10,27 @@ import {
   AdminFormProps,
 } from "./AdminFormSchema";
 
-const AdminForm = ({ admin: propAdmin, handleClose }: AdminFormProps) => {
-  const [admin, setAdmin] = useState<AdminType>(propAdmin);
+const AdminForm = ({ admin, handleClose }: AdminFormProps) => {
+  // const [admin, setAdmin] = useState<AdminType>(propAdmin);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    setValue,
     setError,
+    getValues,
   } = useForm<adminFormType>({
     resolver: zodResolver(adminFormSchema),
     defaultValues: {
       name: admin.name,
       email: admin.email,
-      dob: createYMDString(admin.dob),
+      dob: dmyToYmdString(admin.dob),
       gender: admin.gender,
     },
   });
 
-  const submitHandler = async (formData) => {
+  const submitHandler = async (formData: adminFormType) => {
     try {
       const response = await axios.get<boolean>(
         `http://localhost:8082/admins/exists?&id=${admin.id}&email=${formData.email}`
@@ -46,7 +44,22 @@ const AdminForm = ({ admin: propAdmin, handleClose }: AdminFormProps) => {
         });
         return;
       }
-      console.log("submitting");
+      // console.log("submitting", createDMY(getValues("dob")));
+      const updatedAdmin = {
+        name: getValues("name"),
+        email: getValues("email"),
+        dob: ymdToDmyString(getValues("dob")),
+        gender: getValues("gender"),
+      };
+      axios
+        .put(`http://localhost:8082/admins/${admin.id}`, updatedAdmin)
+        .then(() => {
+          reset();
+          handleClose({ ...updatedAdmin, id: admin.id });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -145,7 +158,7 @@ const AdminForm = ({ admin: propAdmin, handleClose }: AdminFormProps) => {
 
       {/* SUBMIT BUTTON */}
 
-      <button type="submit" className="btn btn-primary">
+      <button disabled={isSubmitting} type="submit" className="btn btn-primary">
         Submit
       </button>
     </form>
