@@ -30,8 +30,11 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean emailExists(Long id, String email) {
-        if (id == null)
+        if (id == null) {
+            // System.out.println("Here, id=null" +
+            // adminRepository.existsByEmailIgnoreCase(email));
             return adminRepository.existsByEmailIgnoreCase(email);
+        }
 
         Optional<Admin> admin = adminRepository.findByEmailIgnoreCase(email);
         if (admin.isPresent()) {

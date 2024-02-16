@@ -1,5 +1,5 @@
 import "react-datepicker/dist/react-datepicker.css";
-import { ymdToDmyString, dmyToYmdString } from "../../utils/Dateformatter";
+import { ymdToDmyString, dmyToYmdString } from "../../../utils/Dateformatter";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,10 +8,21 @@ import {
   adminFormSchema,
   adminFormType,
   AdminFormProps,
-} from "./AdminFormSchema";
+} from "../../forms/AdminFormSchema";
+import { useState } from "react";
 
-const AdminForm = ({ admin, handleClose }: AdminFormProps) => {
+const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
   // const [admin, setAdmin] = useState<AdminType>(propAdmin);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const defaultValues = admin
+    ? {
+        name: admin.name,
+        email: admin.email,
+        dob: dmyToYmdString(admin.dob),
+        gender: admin.gender,
+      }
+    : {};
 
   const {
     register,
@@ -22,18 +33,17 @@ const AdminForm = ({ admin, handleClose }: AdminFormProps) => {
     getValues,
   } = useForm<adminFormType>({
     resolver: zodResolver(adminFormSchema),
-    defaultValues: {
-      name: admin.name,
-      email: admin.email,
-      dob: dmyToYmdString(admin.dob),
-      gender: admin.gender,
-    },
+    defaultValues,
   });
 
   const submitHandler = async (formData: adminFormType) => {
+    const aId = admin ? admin.id : null;
     try {
+      console.log(
+        `http://localhost:8082/admins/exists?email=${formData.email}`
+      );
       const response = await axios.get<boolean>(
-        `http://localhost:8082/admins/exists?&id=${admin.id}&email=${formData.email}`
+        `http://localhost:8082/admins/exists?email=${formData.email}`
       );
       const emailExists = response.data;
 
@@ -45,24 +55,61 @@ const AdminForm = ({ admin, handleClose }: AdminFormProps) => {
         return;
       }
       // console.log("submitting", createDMY(getValues("dob")));
-      const updatedAdmin = {
-        name: getValues("name"),
-        email: getValues("email"),
-        dob: ymdToDmyString(getValues("dob")),
-        gender: getValues("gender"),
-      };
-      axios
-        .put(`http://localhost:8082/admins/${admin.id}`, updatedAdmin)
-        .then(() => {
-          reset();
-          handleClose({ ...updatedAdmin, id: admin.id });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if (aId) {
+        //update existing admin
+        const updatedAdmin = {
+          name: getValues("name"),
+          email: getValues("email"),
+          dob: ymdToDmyString(getValues("dob")),
+          gender: getValues("gender"),
+        };
+        axios
+          .put(`http://localhost:8082/admins/${aId}`, updatedAdmin)
+          .then((response) => {
+            reset();
+            handleClose(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        //add new admin
+        const newAdmin = {
+          name: getValues("name"),
+          email: getValues("email"),
+          dob: ymdToDmyString(getValues("dob")),
+          gender: getValues("gender"),
+        };
+        axios
+          .post(`http://localhost:8082/admins/`, newAdmin)
+          .then((response) => {
+            reset();
+            handleClose(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const deleteHandler = () => {
+    setIsDeleting(true);
+    axios
+      .delete(`http://localhost:8082/admins/${admin?.id}`)
+      .then((response) => {
+        if (response.status === 204) {
+          console.log("Deleted successfully");
+        }
+        reset();
+        admin && handleDelete(admin.id);
+        setIsDeleting(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -139,13 +186,13 @@ const AdminForm = ({ admin, handleClose }: AdminFormProps) => {
           aria-label="Gender select"
         >
           <option>Select a gender</option>
-          <option value="MALE" selected={admin.gender == "MALE"}>
+          <option value="MALE" selected={admin?.gender == "MALE"}>
             Male
           </option>
-          <option value="FEMALE" selected={admin.gender == "FEMALE"}>
+          <option value="FEMALE" selected={admin?.gender == "FEMALE"}>
             Female
           </option>
-          <option value="OTHER" selected={admin.gender == "OTHER"}>
+          <option value="OTHER" selected={admin?.gender == "OTHER"}>
             Other
           </option>
         </select>
@@ -156,11 +203,26 @@ const AdminForm = ({ admin, handleClose }: AdminFormProps) => {
         )}
       </div>
 
-      {/* SUBMIT BUTTON */}
+      {/* BUTTONS */}
 
-      <button disabled={isSubmitting} type="submit" className="btn btn-primary">
-        Submit
-      </button>
+      <div className="d-flex">
+        <button
+          disabled={isSubmitting}
+          type="submit"
+          className="btn btn-success px-5 me-auto"
+        >
+          Submit
+        </button>
+        {admin && (
+          <button
+            onClick={deleteHandler}
+            disabled={isDeleting}
+            className="btn btn-danger ms-auto"
+          >
+            Delete
+          </button>
+        )}
+      </div>
     </form>
   );
 };

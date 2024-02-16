@@ -6,7 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Branch from "./components/pages/Branch.tsx";
 import Employee from "./components/pages/Employee.tsx";
-import Admin from "./components/pages/Admin.tsx";
+import Admin from "./components/pages/Admin/Admin.tsx";
 
 const router = createBrowserRouter([
   {

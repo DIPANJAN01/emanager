@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button, Table } from "react-bootstrap";
-import MyModal from "../MyModal";
+import AdminModal from "./AdminModal";
 
 export interface AdminType {
   id: string;
@@ -13,7 +13,7 @@ export interface AdminType {
 
 const Admin = () => {
   const [admins, setAdmins] = useState<AdminType[]>([]);
-  const [newAdmin, setNewAdmin] = useState<AdminType | null>(null); //will be used to open another modal for new admin
+  const [showNewForm, setShowNewForm] = useState(false); //will be used to open another modal for new admin
 
   const [selectedAdmin, setSelectedAdmin] = useState<AdminType | null>(null);
 
@@ -21,8 +21,9 @@ const Admin = () => {
     setSelectedAdmin(admin);
   };
 
-  const handleClose = (formAdmin?: AdminType) => {
+  const handleClose = (formAdmin: AdminType | null) => {
     if (!formAdmin) {
+      setShowNewForm(false);
       setSelectedAdmin(null);
       return;
     }
@@ -39,7 +40,19 @@ const Admin = () => {
 
       // Update the state with the modified array
       setAdmins(updatedAdmins);
+    } else {
+      setAdmins([...admins, formAdmin]);
     }
+    setShowNewForm(false);
+    setSelectedAdmin(null);
+  };
+
+  const showAddHandler = () => {
+    setShowNewForm(true);
+  };
+
+  const DeleteAdminHandler = (adminIdToDelete: string) => {
+    setAdmins(admins.filter((admin) => admin.id !== adminIdToDelete));
     setSelectedAdmin(null);
   };
 
@@ -56,7 +69,9 @@ const Admin = () => {
 
   return (
     <div>
-      <Button className="d-block ms-auto mb-3">Add Admin</Button>
+      <Button onClick={showAddHandler} className="d-block ms-auto mb-3">
+        Add Admin
+      </Button>
       <Table className="text-center" striped bordered hover>
         <thead>
           <tr>
@@ -84,14 +99,13 @@ const Admin = () => {
         </tbody>
       </Table>
 
-      {selectedAdmin && (
-        <MyModal
-          admin={selectedAdmin ? selectedAdmin : undefined}
-          setAdmin={setSelectedAdmin}
-          show={selectedAdmin ? true : false}
-          handleClose={handleClose}
-        />
-      )}
+      <AdminModal
+        admin={selectedAdmin}
+        setAdmin={setSelectedAdmin}
+        handleDelete={DeleteAdminHandler}
+        show={selectedAdmin ? true : showNewForm}
+        handleClose={handleClose}
+      />
     </div>
   );
 };

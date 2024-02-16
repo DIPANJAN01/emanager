@@ -1,4 +1,4 @@
-import { AdminType } from "../pages/Admin";
+import { AdminType } from "../pages/Admin/Admin";
 import { EmployeeType } from "../pages/Employee";
 import { Form } from "react-bootstrap";
 

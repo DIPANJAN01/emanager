@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { ymdStrToDmyDate, isAdult } from "../../utils/Dateformatter";
-import { AdminType } from "../pages/Admin";
+import { AdminType } from "../pages/Admin/Admin";
 export interface AdminFormProps {
-  admin: AdminType;
+  admin: AdminType | null;
   handleClose: (admin: AdminType) => void;
+  handleDelete: (id: string) => void;
 }
 export const adminFormSchema = z
   .object({

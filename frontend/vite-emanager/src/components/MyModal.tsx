@@ -2,9 +2,9 @@ import Modal from "react-bootstrap/Modal";
 import BranchForm from "./forms/BranchForm";
 import Employee, { EmployeeType } from "./pages/Employee";
 import Branch, { BranchType } from "./pages/Branch";
-import { AdminType } from "./pages/Admin";
+import { AdminType } from "./pages/Admin/Admin";
 import EmployeeForm from "./forms/EmployeeForm";
-import AdminForm from "./forms/AdminForm";
+import AdminForm from "./pages/Admin/AdminForm";
 
 interface ModalProps {
   show: boolean;
