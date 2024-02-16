@@ -14,6 +14,7 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <div>404 Not Found</div>,
     children: [
+      { path: "/", element: <Employee /> },
       { path: "/employees", element: <Employee /> },
       { path: "/branches", element: <Branch /> },
       { path: "/admins", element: <Admin /> },

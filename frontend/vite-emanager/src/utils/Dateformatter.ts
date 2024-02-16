@@ -26,7 +26,7 @@ export function ymdToDmyString(dateString: string) {
   const year = parts[0];
   const month = parts[1];
   const day = parts[2];
-  console.log(`${day}-${month}-${year}`);
+  // console.log(`${day}-${month}-${year}`);
   return `${day}-${month}-${year}`;
 }
 

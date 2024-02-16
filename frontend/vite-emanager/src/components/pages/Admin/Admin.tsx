@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button, Table } from "react-bootstrap";
 import AdminModal from "./AdminModal";
+import "react-loading-skeleton/dist/skeleton.css";
+import LoadingSkeleton from "../../LoadingSkeleton";
 
 export interface AdminType {
   id: string;
@@ -14,6 +16,7 @@ export interface AdminType {
 const Admin = () => {
   const [admins, setAdmins] = useState<AdminType[]>([]);
   const [showNewForm, setShowNewForm] = useState(false); //will be used to open another modal for new admin
+  const [isLoading, setIsLoading] = useState(false);
 
   const [selectedAdmin, setSelectedAdmin] = useState<AdminType | null>(null);
 
@@ -57,47 +60,63 @@ const Admin = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get<AdminType[]>("http://localhost:8082/admins/")
       .then((response) => {
         setAdmins(response.data);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching admins:", error);
+        setIsLoading(false);
       });
   }, []);
 
   return (
     <div>
-      <Button onClick={showAddHandler} className="d-block ms-auto mb-3">
-        Add Admin
-      </Button>
-      <Table className="text-center" striped bordered hover>
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th className="minWidthTh">Admin Name</th>
-            <th>Admin Email</th>
-            <th className="d-none d-md-table-cell">Gender</th>
-            <th className="d-none d-md-table-cell">Date of birth</th>
-          </tr>
-        </thead>
-        <tbody>
-          {admins.map((admin, index) => (
-            <tr
-              style={{ cursor: "pointer" }}
-              onClick={() => handleRowClick(admin)}
-              key={index}
-            >
-              <td>{admin.id}</td>
-              <td>{admin.name}</td>
-              <td>{admin.email}</td>
-              <td className="d-none d-md-table-cell">{admin.gender}</td>
-              <td className="d-none d-md-table-cell">{admin.dob}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <div className="d-flex justify-content-between">
+        <h1>Admins</h1>
+        <Button onClick={showAddHandler} className="d-block btn-dark mb-3">
+          Add Admin
+        </Button>
+      </div>
+
+      <div className="card">
+        <div className="card-body">
+          {isLoading && <LoadingSkeleton rows={5} />}
+          {!isLoading && (
+            <Table className="text-center" striped hover>
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th className="minWidthTh">Admin Name</th>
+                  <th>Admin Email</th>
+                  {/* <th className="d-none d-md-table-cell">Admin Email</th> */}
+                  {/* <th className="d-md-none maxWidthTh">Admin Email</th> */}
+                  <th className="d-none d-md-table-cell">Gender</th>
+                  <th className="d-none d-md-table-cell">Date of birth</th>
+                </tr>
+              </thead>
+              <tbody>
+                {admins.map((admin, index) => (
+                  <tr
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleRowClick(admin)}
+                    key={index}
+                  >
+                    <td>{admin.id}</td>
+                    <td>{admin.name}</td>
+                    <td>{admin.email}</td>
+                    <td className="d-none d-md-table-cell">{admin.gender}</td>
+                    <td className="d-none d-md-table-cell">{admin.dob}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+        </div>
+      </div>
 
       <AdminModal
         admin={selectedAdmin}

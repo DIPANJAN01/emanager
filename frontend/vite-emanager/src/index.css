@@ -67,5 +67,6 @@ button:focus-visible {
   }
 } */
 
-.hoverPointer {
+th.maxWidthTh {
+  max-width: 8px !important;
 }

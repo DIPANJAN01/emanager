@@ -39,12 +39,16 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
   const submitHandler = async (formData: adminFormType) => {
     const aId = admin ? admin.id : null;
     try {
-      console.log(
-        `http://localhost:8082/admins/exists?email=${formData.email}`
-      );
-      const response = await axios.get<boolean>(
-        `http://localhost:8082/admins/exists?email=${formData.email}`
-      );
+      // console.log(
+      //   `http://localhost:8082/admins/exists?email=${formData.email}`
+      // );
+      let checkUrl;
+      if (aId)
+        checkUrl = `http://localhost:8082/admins/exists?id=${aId}&email=${formData.email}`;
+      else
+        checkUrl = `http://localhost:8082/admins/exists?email=${formData.email}`;
+
+      const response = await axios.get<boolean>(checkUrl);
       const emailExists = response.data;
 
       if (emailExists) {
@@ -63,6 +67,7 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
           dob: ymdToDmyString(getValues("dob")),
           gender: getValues("gender"),
         };
+
         axios
           .put(`http://localhost:8082/admins/${aId}`, updatedAdmin)
           .then((response) => {
@@ -101,7 +106,7 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
       .delete(`http://localhost:8082/admins/${admin?.id}`)
       .then((response) => {
         if (response.status === 204) {
-          console.log("Deleted successfully");
+          // console.log("Deleted successfully");
         }
         reset();
         admin && handleDelete(admin.id);
@@ -184,17 +189,12 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
           id="InputGender"
           className="form-select"
           aria-label="Gender select"
+          defaultValue={admin?.gender}
         >
           <option>Select a gender</option>
-          <option value="MALE" selected={admin?.gender == "MALE"}>
-            Male
-          </option>
-          <option value="FEMALE" selected={admin?.gender == "FEMALE"}>
-            Female
-          </option>
-          <option value="OTHER" selected={admin?.gender == "OTHER"}>
-            Other
-          </option>
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+          <option value="OTHER">Other</option>
         </select>
         {errors.gender && (
           <div id="genderHelp" className="form-text text-danger">
