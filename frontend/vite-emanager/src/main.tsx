@@ -7,11 +7,19 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Branch from "./components/pages/Branch.tsx";
 import Employee from "./components/pages/Employee.tsx";
 import Admin from "./components/pages/Admin/Admin.tsx";
-
+import { SnackbarProvider } from "notistack";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <SnackbarProvider
+        maxSnack={1}
+        preventDuplicate={false}
+        autoHideDuration={3000}
+      >
+        <App />
+      </SnackbarProvider>
+    ),
     errorElement: <div>404 Not Found</div>,
     children: [
       { path: "/", element: <Employee /> },

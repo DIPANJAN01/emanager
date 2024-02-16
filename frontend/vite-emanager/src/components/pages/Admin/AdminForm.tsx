@@ -10,9 +10,11 @@ import {
   AdminFormProps,
 } from "../../forms/AdminFormSchema";
 import { useState } from "react";
+import { useSnackbar } from "notistack";
 
 const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
   // const [admin, setAdmin] = useState<AdminType>(propAdmin);
+  const { enqueueSnackbar } = useSnackbar();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const defaultValues = admin
@@ -73,9 +75,15 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
           .then((response) => {
             reset();
             handleClose(response.data);
+            enqueueSnackbar("Admin updated successfully", {
+              variant: "success",
+            });
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
+            enqueueSnackbar("Something went wrong! Please try again!", {
+              variant: "error",
+            });
+            // console.log(error);
           });
       } else {
         //add new admin
@@ -90,13 +98,20 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
           .then((response) => {
             reset();
             handleClose(response.data);
+            enqueueSnackbar("Admin added successfully", { variant: "success" });
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
+            enqueueSnackbar("Something went wrong! Please try again!", {
+              variant: "error",
+            });
+            // console.log(error);
           });
       }
     } catch (error) {
-      console.log(error);
+      enqueueSnackbar("Something went wrong! Please try again!", {
+        variant: "error",
+      });
+      // console.log(error);
     }
   };
 
@@ -110,10 +125,14 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
         }
         reset();
         admin && handleDelete(admin.id);
+        enqueueSnackbar("Admin deleted successfully!");
         setIsDeleting(false);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        enqueueSnackbar("Something went wrong! Please try again!", {
+          variant: "error",
+        });
+        // console.log(error);
       });
   };
 
@@ -206,21 +225,33 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
       {/* BUTTONS */}
 
       <div className="d-flex">
-        <button
-          disabled={isSubmitting}
-          type="submit"
-          className="btn btn-success px-5 me-auto"
+        <div
+          className={
+            isDeleting || isSubmitting ? "isDisabled me-auto" : "me-auto"
+          }
         >
-          Submit
-        </button>
-        {admin && (
           <button
-            onClick={deleteHandler}
-            disabled={isDeleting}
-            className="btn btn-danger ms-auto"
+            disabled={isSubmitting}
+            type="submit"
+            className="btn btn-success px-5 "
           >
-            Delete
+            Submit
           </button>
+        </div>
+        {admin && (
+          <div
+            className={
+              isDeleting || isSubmitting ? "isDisabled ms-auto" : "ms-auto"
+            }
+          >
+            <button
+              onClick={deleteHandler}
+              disabled={isDeleting || isSubmitting}
+              className="btn btn-danger"
+            >
+              Delete
+            </button>
+          </div>
         )}
       </div>
     </form>

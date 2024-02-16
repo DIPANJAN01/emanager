@@ -3,6 +3,7 @@ import { Nav, Navbar } from "react-bootstrap";
 import { NavLink, Outlet } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import "./App.css";
+
 function App() {
   // const [count, setCount] = useState(0);
   const isLgUp = useMediaQuery({ query: "(min-width: 992px)" });

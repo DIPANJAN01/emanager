@@ -39,9 +39,25 @@ export function formatDateToString(date: Date) {
 }
 export const isValidDate = (date: Date) => !isNaN(date.getTime());
 
-export const isAdult = (date: Date) => {
-  const today = new Date();
-  // console.log(date.getFullYear());
-  const age = today.getFullYear() - date.getFullYear();
+export const isAdult = (dateOfBirth: Date) => {
+  // Create a Date object from the date of birth string
+  const dob = new Date(dateOfBirth);
+
+  // Get the current date
+  const currentDate = new Date();
+
+  // Calculate the age by subtracting the birth year from the current year
+  let age = currentDate.getFullYear() - dob.getFullYear();
+
+  // If the current month is less than the birth month, or if it's the same month but the current day is before the birth day, decrement the age
+  if (
+    currentDate.getMonth() < dob.getMonth() ||
+    (currentDate.getMonth() === dob.getMonth() &&
+      currentDate.getDate() < dob.getDate())
+  ) {
+    age--;
+  }
+
+  // Check if the person is 18 years old or older
   return age >= 18;
 };

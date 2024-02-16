@@ -33,7 +33,7 @@ const LoadingSkeleton = ({ rows }: LoadingSkeletonPropType) => {
         <tbody>
           {Array(rows)
             .fill(0)
-            .map((item, index) => (
+            .map((_item, index) => (
               <tr key={index}>
                 <td>
                   <Skeleton height={20} />

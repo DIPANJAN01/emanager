@@ -70,3 +70,7 @@ button:focus-visible {
 th.maxWidthTh {
   max-width: 8px !important;
 }
+
+.isDisabled {
+  cursor: not-allowed !important;
+}
