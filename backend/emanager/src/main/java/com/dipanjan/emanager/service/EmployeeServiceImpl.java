@@ -16,8 +16,8 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-    BranchService branchService;
-    EmployeeRepository empRepository;
+    private final BranchService branchService;
+    private final EmployeeRepository empRepository;
 
     @Override
     public Employee getEmployee(Long id) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button, Table } from "react-bootstrap";
-import { BranchType } from "../Branch";
+import { BranchType } from "../Branch/Branch";
 import LoadingSkeleton from "../../LoadingSkeleton";
 import EmployeeModal from "./EmployeeModal";
 
@@ -107,6 +107,13 @@ const Employee = () => {
               <tbody>
                 {employees.map((employee, index) => (
                   <tr
+                    className={
+                      selectedEmployee
+                        ? selectedEmployee.id === employee.id
+                          ? "table-active"
+                          : ""
+                        : ""
+                    }
                     style={{ cursor: "pointer" }}
                     onClick={() => handleRowClick(employee)}
                     key={index}

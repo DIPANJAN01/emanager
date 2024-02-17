@@ -11,7 +11,7 @@ import {
 } from "../../forms/schemas/EmployeeFormSchema";
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { BranchType } from "../Branch";
+import { BranchType } from "../Branch/Branch";
 
 const EmployeeForm = ({
   employee,
@@ -46,7 +46,6 @@ const EmployeeForm = ({
   });
 
   const submitHandler = async (formData: employeeFormType) => {
-    console.log("branch=" + getValues("branch"));
     const aId = employee ? employee.id : null;
     try {
       let emailCheckUrl;
@@ -75,7 +74,7 @@ const EmployeeForm = ({
           email: getValues("email"),
           dob: ymdToDmyString(getValues("dob")),
           branch: branches.find(
-            (branch) => branch.id === parseInt(getValues("branch"))
+            (branch) => String(branch.id) === getValues("branch")
           ),
           gender: getValues("gender"),
         };
@@ -103,9 +102,16 @@ const EmployeeForm = ({
           dob: ymdToDmyString(getValues("dob")),
           gender: getValues("gender"),
           branch: branches.find(
-            (branch) => branch.id === parseInt(getValues("branch"))
+            (branch) => String(branch.id) === getValues("branch")
           ),
         };
+        console.log("branches:", branches);
+        console.log("getValues(branch):", getValues("branch"));
+        console.log(
+          "branch found:",
+          branches.find((branch) => branch.id === getValues("branch"))
+        );
+        console.log("newEmployee:", newEmployee);
         axios
           .post(`http://localhost:8082/employees/`, newEmployee)
           .then((response) => {
@@ -162,6 +168,7 @@ const EmployeeForm = ({
           variant: "error",
         });
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // console.log(employee);

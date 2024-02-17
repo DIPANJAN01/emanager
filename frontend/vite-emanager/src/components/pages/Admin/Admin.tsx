@@ -101,6 +101,13 @@ const Admin = () => {
               <tbody>
                 {admins.map((admin, index) => (
                   <tr
+                    className={
+                      selectedAdmin
+                        ? selectedAdmin.id === admin.id
+                          ? "table-active"
+                          : ""
+                        : ""
+                    }
                     style={{ cursor: "pointer" }}
                     onClick={() => handleRowClick(admin)}
                     key={index}

@@ -9,6 +9,8 @@ public interface BranchService {
 
     List<Branch> getAllBranches();
 
+    public boolean nameExists(Long id, String name);
+
     Branch createBranch(Branch updatedBranch);
 
     Branch editBranch(Long id, Branch updatedBranch);

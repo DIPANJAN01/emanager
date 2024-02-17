@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Branch from "./components/pages/Branch.tsx";
+import Branch from "./components/pages/Branch/Branch.tsx";
 import Employee from "./components/pages/Employee/Employee.tsx";
 import Admin from "./components/pages/Admin/Admin.tsx";
 import { SnackbarProvider } from "notistack";

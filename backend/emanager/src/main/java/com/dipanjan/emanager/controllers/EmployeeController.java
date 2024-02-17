@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/employees")
 
 public class EmployeeController {
-    EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
     @GetMapping("/")
     public ResponseEntity<List<Employee>> getAllEmployees() {

@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
-    AdminRepository adminRepository;
+    private final AdminRepository adminRepository;
 
     @Override
     public Admin getAdmin(Long id) {

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/admins")
 
 public class AdminController {
-    AdminService adminAdminService;
+    private final AdminService adminAdminService;
 
     @GetMapping("/")
     public ResponseEntity<List<Admin>> getAllAdmins() {
