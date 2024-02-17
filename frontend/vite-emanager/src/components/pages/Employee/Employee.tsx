@@ -4,6 +4,7 @@ import { Button, Table } from "react-bootstrap";
 import { BranchType } from "../Branch/Branch";
 import LoadingSkeleton from "../../LoadingSkeleton";
 import EmployeeModal from "./EmployeeModal";
+import { enqueueSnackbar } from "notistack";
 
 export interface EmployeeType {
   id: string;
@@ -72,8 +73,10 @@ const Employee = () => {
         setEmployees(response.data);
         setIsLoading(false);
       })
-      .catch((error) => {
-        console.error("Error fetching employee:", error);
+      .catch(() => {
+        enqueueSnackbar("Something went wrong! Please try again!", {
+          variant: "error",
+        });
         setIsLoading(false);
       });
   }, []);

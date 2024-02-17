@@ -4,10 +4,12 @@ import App from "./App.tsx";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Branch from "./components/pages/Branch/Branch.tsx";
-import Employee from "./components/pages/Employee/Employee.tsx";
-import Admin from "./components/pages/Admin/Admin.tsx";
+
 import { SnackbarProvider } from "notistack";
+import NotFound from "./components/pages/NotFound.tsx";
+import Employee from "./components/pages/Employee/Employee.tsx";
+import Branch from "./components/pages/Branch/Branch.tsx";
+import Admin from "./components/pages/Admin/Admin.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,7 +22,7 @@ const router = createBrowserRouter([
         <App />
       </SnackbarProvider>
     ),
-    errorElement: <div>404 Not Found</div>,
+    errorElement: <NotFound />,
     children: [
       { path: "/", element: <Employee /> },
       { path: "/employees", element: <Employee /> },

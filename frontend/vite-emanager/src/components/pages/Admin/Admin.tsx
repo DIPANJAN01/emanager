@@ -4,6 +4,7 @@ import { Button, Table } from "react-bootstrap";
 import AdminModal from "./AdminModal";
 import "react-loading-skeleton/dist/skeleton.css";
 import LoadingSkeleton from "../../LoadingSkeleton";
+import { enqueueSnackbar } from "notistack";
 
 export interface AdminType {
   id: string;
@@ -67,8 +68,10 @@ const Admin = () => {
         setAdmins(response.data);
         setIsLoading(false);
       })
-      .catch((error) => {
-        console.error("Error fetching admins:", error);
+      .catch(() => {
+        enqueueSnackbar("Something went wrong! Please try again!", {
+          variant: "error",
+        });
         setIsLoading(false);
       });
   }, []);

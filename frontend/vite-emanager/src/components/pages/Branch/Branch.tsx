@@ -3,6 +3,7 @@ import axios from "axios";
 import { Button, Table } from "react-bootstrap";
 import LoadingSkeleton from "../../LoadingSkeleton";
 import BranchModal from "./BranchModal";
+import { enqueueSnackbar } from "notistack";
 
 export interface BranchType {
   id: string;
@@ -65,8 +66,10 @@ const Branch = () => {
         setBranches(response.data);
         setIsLoading(false);
       })
-      .catch((error) => {
-        console.error("Error fetching branch:", error);
+      .catch(() => {
+        enqueueSnackbar("Something went wrong! Please try again!", {
+          variant: "error",
+        });
         setIsLoading(false);
       });
   }, []);
