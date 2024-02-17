@@ -1,17 +1,20 @@
 import { z } from "zod";
-import { ymdStrToDmyDate, isAdult } from "../../utils/Dateformatter";
-import { AdminType } from "../pages/Admin/Admin";
-export interface AdminFormProps {
-  admin: AdminType | null;
-  handleClose: (admin: AdminType) => void;
+import { ymdStrToDmyDate, isAdult } from "../../../utils/Dateformatter";
+import { EmployeeType } from "../../pages/Employee/Employee";
+
+export interface EmployeeFormProps {
+  employee: EmployeeType | null;
+  handleClose: (employee: EmployeeType) => void;
   handleDelete: (id: string) => void;
 }
-export const adminFormSchema = z
+
+export const employeeFormSchema = z
   .object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email(),
     gender: z.string(),
     dob: z.string().min(1, "Please select a date of birth!"),
+    branch: z.string().min(1, "Please select a branch!"),
   })
   .refine(
     (data) => {
@@ -38,9 +41,9 @@ export const adminFormSchema = z
       return isAdult(ymdStrToDmyDate(data.dob));
     },
     {
-      message: "Admin must be above 18!",
+      message: "Employee must be above 18!",
       path: ["dob"],
     }
   );
 
-export type adminFormType = z.infer<typeof adminFormSchema>;
+export type employeeFormType = z.infer<typeof employeeFormSchema>;

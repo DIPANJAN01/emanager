@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +38,13 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
         return new ResponseEntity<>(employeeService.getEmployee(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> checkEmployeeExists(@RequestParam(required = false) Long id,
+            @RequestParam String email) {
+        // System.out.println("in exits");
+        return new ResponseEntity<>(employeeService.emailExists(id, email), HttpStatus.OK);
     }
 
     @PostMapping("/")

@@ -42,7 +42,8 @@ public class AdminController {
     }
 
     @GetMapping("/exists")
-    public ResponseEntity<Boolean> getAdmin(@RequestParam(required = false) Long id, @RequestParam String email) {
+    public ResponseEntity<Boolean> checkAdminExits(@RequestParam(required = false) Long id,
+            @RequestParam String email) {
         // System.out.println("in exits");
         return new ResponseEntity<>(adminAdminService.emailExists(id, email), HttpStatus.OK);
     }

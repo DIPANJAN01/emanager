@@ -74,3 +74,7 @@ th.maxWidthTh {
 .isDisabled {
   cursor: not-allowed !important;
 }
+
+body {
+  background-color: #f1f3f5 !important;
+}

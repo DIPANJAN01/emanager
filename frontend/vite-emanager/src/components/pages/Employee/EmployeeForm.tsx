@@ -5,24 +5,31 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import {
-  adminFormSchema,
-  adminFormType,
-  AdminFormProps,
-} from "../../forms/schemas/AdminFormSchema";
-import { useState } from "react";
+  employeeFormSchema,
+  employeeFormType,
+  EmployeeFormProps,
+} from "../../forms/schemas/EmployeeFormSchema";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
+import { BranchType } from "../Branch";
 
-const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
-  // const [admin, setAdmin] = useState<AdminType>(propAdmin);
+const EmployeeForm = ({
+  employee,
+  handleClose,
+  handleDelete,
+}: EmployeeFormProps) => {
+  // const [employee, setEmployee] = useState<EmployeeType>(propEmployee);
   const { enqueueSnackbar } = useSnackbar();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [branches, setBranches] = useState<BranchType[]>([]);
 
-  const defaultValues = admin
+  const defaultValues = employee
     ? {
-        name: admin.name,
-        email: admin.email,
-        dob: dmyToYmdString(admin.dob),
-        gender: admin.gender,
+        name: employee.name,
+        email: employee.email,
+        dob: dmyToYmdString(employee.dob),
+        gender: employee.gender,
+        branch: String(employee.branch.id),
       }
     : {};
 
@@ -33,24 +40,22 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
     reset,
     setError,
     getValues,
-  } = useForm<adminFormType>({
-    resolver: zodResolver(adminFormSchema),
+  } = useForm<employeeFormType>({
+    resolver: zodResolver(employeeFormSchema),
     defaultValues,
   });
 
-  const submitHandler = async (formData: adminFormType) => {
-    const aId = admin ? admin.id : null;
+  const submitHandler = async (formData: employeeFormType) => {
+    console.log("branch=" + getValues("branch"));
+    const aId = employee ? employee.id : null;
     try {
-      // console.log(
-      //   `http://localhost:8082/admins/exists?email=${formData.email}`
-      // );
-      let checkUrl;
+      let emailCheckUrl;
       if (aId)
-        checkUrl = `http://localhost:8082/admins/exists?id=${aId}&email=${formData.email}`;
+        emailCheckUrl = `http://localhost:8082/employees/exists?id=${aId}&email=${formData.email}`;
       else
-        checkUrl = `http://localhost:8082/admins/exists?email=${formData.email}`;
+        emailCheckUrl = `http://localhost:8082/employees/exists?email=${formData.email}`;
 
-      const response = await axios.get<boolean>(checkUrl);
+      const response = await axios.get<boolean>(emailCheckUrl);
       const emailExists = response.data;
 
       if (emailExists) {
@@ -60,22 +65,27 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
         });
         return;
       }
-      // console.log("submitting", createDMY(getValues("dob")));
+
+      //check branch exists:
+
       if (aId) {
-        //update existing admin
-        const updatedAdmin = {
+        //update existing employee
+        const updatedEmployee = {
           name: getValues("name"),
           email: getValues("email"),
           dob: ymdToDmyString(getValues("dob")),
+          branch: branches.find(
+            (branch) => branch.id === parseInt(getValues("branch"))
+          ),
           gender: getValues("gender"),
         };
 
         axios
-          .put(`http://localhost:8082/admins/${aId}`, updatedAdmin)
+          .put(`http://localhost:8082/employees/${aId}`, updatedEmployee)
           .then((response) => {
             reset();
             handleClose(response.data);
-            enqueueSnackbar("Admin updated successfully", {
+            enqueueSnackbar("Employee updated successfully", {
               variant: "success",
             });
           })
@@ -86,19 +96,24 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
             // console.log(error);
           });
       } else {
-        //add new admin
-        const newAdmin = {
+        //add new employee
+        const newEmployee = {
           name: getValues("name"),
           email: getValues("email"),
           dob: ymdToDmyString(getValues("dob")),
           gender: getValues("gender"),
+          branch: branches.find(
+            (branch) => branch.id === parseInt(getValues("branch"))
+          ),
         };
         axios
-          .post(`http://localhost:8082/admins/`, newAdmin)
+          .post(`http://localhost:8082/employees/`, newEmployee)
           .then((response) => {
             reset();
             handleClose(response.data);
-            enqueueSnackbar("Admin added successfully", { variant: "success" });
+            enqueueSnackbar("Employee added successfully", {
+              variant: "success",
+            });
           })
           .catch(() => {
             enqueueSnackbar("Something went wrong! Please try again!", {
@@ -118,14 +133,14 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
   const deleteHandler = () => {
     setIsDeleting(true);
     axios
-      .delete(`http://localhost:8082/admins/${admin?.id}`)
+      .delete(`http://localhost:8082/employees/${employee?.id}`)
       .then((response) => {
         if (response.status === 204) {
           // console.log("Deleted successfully");
         }
         reset();
-        admin && handleDelete(admin.id);
-        enqueueSnackbar("Admin deleted successfully!");
+        employee && handleDelete(employee.id);
+        enqueueSnackbar("Employee deleted successfully!");
         setIsDeleting(false);
       })
       .catch(() => {
@@ -136,13 +151,27 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
       });
   };
 
+  useEffect(() => {
+    axios
+      .get<BranchType[]>("http://localhost:8082/branches/")
+      .then((response) => {
+        setBranches(response.data);
+      })
+      .catch(() => {
+        enqueueSnackbar("Something went wrong! Please try again!", {
+          variant: "error",
+        });
+      });
+  }, []);
+
+  // console.log(employee);
   return (
     <form noValidate onSubmit={handleSubmit(submitHandler)}>
       {/* NAME */}
 
       <div className="mb-3">
         <label htmlFor="exampleInputName" className="form-label">
-          Admin name
+          Employee name
         </label>
         <input
           {...register("name")}
@@ -208,7 +237,7 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
           id="InputGender"
           className="form-select"
           aria-label="Gender select"
-          defaultValue={admin?.gender}
+          defaultValue={employee?.gender}
         >
           <option>Select a gender</option>
           <option value="MALE">Male</option>
@@ -218,6 +247,36 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
         {errors.gender && (
           <div id="genderHelp" className="form-text text-danger">
             {errors.gender.message}
+          </div>
+        )}
+      </div>
+
+      {/* BRANCH: */}
+
+      <div className="mb-3">
+        <label htmlFor="InputBranch" className="form-label">
+          Branch
+        </label>
+        <select
+          {...register("branch")}
+          id="InputBranch"
+          className="form-select"
+          aria-label="Branch select"
+        >
+          <option value="">Select a branch</option>
+          {branches.map((branch, index) => (
+            <option
+              selected={branch.id === employee?.branch.id}
+              value={String(branch.id)}
+              key={index}
+            >
+              {branch.name}, {branch.city}
+            </option>
+          ))}
+        </select>
+        {errors.branch && (
+          <div id="branchHelp" className="form-text text-danger">
+            {errors.branch.message}
           </div>
         )}
       </div>
@@ -238,7 +297,7 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
             Submit
           </button>
         </div>
-        {admin && (
+        {employee && (
           <div
             className={
               isDeleting || isSubmitting ? "isDisabled ms-auto" : "ms-auto"
@@ -258,4 +317,4 @@ const AdminForm = ({ admin, handleClose, handleDelete }: AdminFormProps) => {
   );
 };
 
-export default AdminForm;
+export default EmployeeForm;

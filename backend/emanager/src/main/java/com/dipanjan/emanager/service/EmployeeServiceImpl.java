@@ -31,6 +31,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public boolean emailExists(Long id, String email) {
+        if (id == null) {
+            // System.out.println("Here, id=null" +
+            // adminRepository.existsByEmailIgnoreCase(email));
+            return empRepository.existsByEmailIgnoreCase(email);
+        }
+
+        Optional<Employee> employee = empRepository.findByEmailIgnoreCase(email);
+        if (employee.isPresent()) {
+            if (employee.get().getId() != id)
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public Employee createEmployee(Employee newEmployee) {
         if (empRepository.existsByEmailIgnoreCase(newEmployee.getEmail()))
             throw new EntityAlreadyExistsException(
