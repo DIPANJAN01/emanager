@@ -9,6 +9,8 @@ public interface EmployeeService {
 
     Employee createEmployee(Employee updatedEmployee);
 
+    public boolean emailExists(Long id, String email);
+
     List<Employee> getAllEmployees();
 
     Employee editEmployee(Long id, Employee updatedEmployee);

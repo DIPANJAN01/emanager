@@ -1,16 +1,62 @@
-import { useState } from "react";
-import Branch from "./components/Branch";
 import Container from "react-bootstrap/Container";
-import Employe from "./components/Employee";
-function App() {
-  const [count, setCount] = useState(0);
+import { Nav, Navbar } from "react-bootstrap";
+import { NavLink, Outlet } from "react-router-dom";
+import { useMediaQuery } from "react-responsive";
+import "./App.css";
 
+function App() {
+  // const [count, setCount] = useState(0);
+  const isLgUp = useMediaQuery({ query: "(min-width: 992px)" });
   return (
-    <Container>
-      <button className="btn btn-warning p-3 m-5">Hello</button>
-      {/* <Branch /> */}
-      <Employe />
-    </Container>
+    <>
+      <Navbar
+        expand="lg"
+        bg="dark"
+        data-bs-theme="dark"
+        className="bg-body-tertiary mb-5"
+      >
+        <Container>
+          <Navbar.Brand>
+            <NavLink to={"/employees"}> EManager</NavLink>
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className={isLgUp ? "myLeftShift" : "text-center"}>
+              <NavLink
+                to={"/employees"}
+                className={({ isActive }) => {
+                  return isActive ? "myIsSelected mb-1" : "mb-1";
+                }}
+              >
+                Employees
+              </NavLink>
+
+              <NavLink
+                to={"/admins"}
+                className={({ isActive }) => {
+                  return isActive ? "myIsSelected mb-1" : "mb-1";
+                }}
+              >
+                Admins
+              </NavLink>
+
+              <NavLink
+                to={"/branches"}
+                className={({ isActive }) => {
+                  return isActive ? "myIsSelected mb-1" : "mb-1";
+                }}
+              >
+                Branches
+              </NavLink>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+
+      <Container>
+        <Outlet />
+      </Container>
+    </>
   );
 }
 export default App;

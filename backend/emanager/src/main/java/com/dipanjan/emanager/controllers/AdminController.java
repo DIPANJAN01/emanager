@@ -17,17 +17,19 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = { "http://localhost:5173", "http://127.0.0.1:5173" })
+// @CrossOrigin(origins = { "http://localhost:5173", "http://127.0.0.1:5173" })
+@CrossOrigin(origins = "*")
 @RequestMapping("/admins")
 
 public class AdminController {
-    AdminService adminAdminService;
+    private final AdminService adminAdminService;
 
     @GetMapping("/")
     public ResponseEntity<List<Admin>> getAllAdmins() {
@@ -37,6 +39,13 @@ public class AdminController {
     @GetMapping("/{id}")
     public ResponseEntity<Admin> getAdmin(@PathVariable Long id) {
         return new ResponseEntity<>(adminAdminService.getAdmin(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> checkAdminExits(@RequestParam(required = false) Long id,
+            @RequestParam String email) {
+        // System.out.println("in exits");
+        return new ResponseEntity<>(adminAdminService.emailExists(id, email), HttpStatus.OK);
     }
 
     @PostMapping("/")

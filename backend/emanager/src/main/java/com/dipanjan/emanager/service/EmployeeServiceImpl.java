@@ -16,8 +16,8 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-    BranchService branchService;
-    EmployeeRepository empRepository;
+    private final BranchService branchService;
+    private final EmployeeRepository empRepository;
 
     @Override
     public Employee getEmployee(Long id) {
@@ -28,6 +28,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> getAllEmployees() {
         return (List<Employee>) empRepository.findAll();
+    }
+
+    @Override
+    public boolean emailExists(Long id, String email) {
+        if (id == null) {
+            // System.out.println("Here, id=null" +
+            // adminRepository.existsByEmailIgnoreCase(email));
+            return empRepository.existsByEmailIgnoreCase(email);
+        }
+
+        Optional<Employee> employee = empRepository.findByEmailIgnoreCase(email);
+        if (employee.isPresent()) {
+            if (employee.get().getId() != id)
+                return true;
+        }
+
+        return false;
     }
 
     @Override

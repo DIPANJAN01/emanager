@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class BranchServiceImpl implements BranchService {
-    BranchRepository branchRepository;
+    private final BranchRepository branchRepository;
 
     @Override
     public Branch getBranch(Long id) {
@@ -28,7 +28,7 @@ public class BranchServiceImpl implements BranchService {
         return (List<Branch>) branchRepository.findAll();
     }
 
-    public boolean checkBranchExists(String branchName) {
+    public boolean checkNameExists(String branchName) {
         if (branchRepository.existsByNameIgnoreCase(branchName))
             throw new EntityAlreadyExistsException("A branch of name '" + branchName + "' already exists!");
 
@@ -36,9 +36,26 @@ public class BranchServiceImpl implements BranchService {
     }
 
     @Override
+    public boolean nameExists(Long id, String name) {
+        if (id == null) {
+            // System.out.println("Here, id=null" +
+            // adminRepository.existsByEmailIgnoreCase(email));
+            return branchRepository.existsByNameIgnoreCase(name);
+        }
+
+        Optional<Branch> branch = branchRepository.findByNameIgnoreCase(name);
+        if (branch.isPresent()) {
+            if (branch.get().getId() != id)
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public Branch createBranch(Branch newBranch) {
 
-        checkBranchExists(newBranch.getName());// will throw an error if the branch name exists
+        checkNameExists(newBranch.getName());// will throw an error if the branch name exists
         return branchRepository.save(newBranch);
 
     }

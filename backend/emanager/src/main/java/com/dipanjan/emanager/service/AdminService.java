@@ -9,6 +9,8 @@ public interface AdminService {
 
     Admin createAdmin(Admin updatedAdmin);
 
+    public boolean emailExists(Long id, String email);
+
     List<Admin> getAllAdmins();
 
     Admin editAdmin(Long id, Admin updatedAdmin);
